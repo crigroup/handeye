@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>handeye</name>
+  <version>0.0.0</version>
+  <description>The handeye package</description>
+
+  <author email="fsuarez6@gmail.com">Francisco Suarez-Ruiz</author>
+  <maintainer email="fsuarez6@gmail.com">Francisco Suarez-Ruiz</maintainer>
+  <license>BSD 3-Clause</license>
+  <url type="website">http://wiki.ros.org/handeye</url>
+  <url type="repository">https://github.com/crigroup/handeye</url>
+  <url type="bugtracker">https://github.com/crigroup/handeye/issues</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>baldor</exec_depend>
+  <exec_depend>python-matplotlib</exec_depend>
+  <exec_depend>python-numpy</exec_depend>
+  <exec_depend>python-scipy</exec_depend>
+
+  <doc_depend>rosdoc_lite</doc_depend>
+  <doc_depend>sphinxcontrib-bibtex</doc_depend>
+
+  <export>
+    <rosdoc config="rosdoc.yaml"/>
+  </export>
+
+</package>
