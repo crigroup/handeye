@@ -1,0 +1,13 @@
+string                    setup
+string                    solver
+geometry_msgs/PoseArray   effector_wrt_world
+geometry_msgs/PoseArray   object_wrt_sensor
+---
+bool                      success
+# For a Moving setup, sensor_frame contains:
+# The estimated pose between the sensor and the robot end-effector
+# For a Fixed setup, sensor_frame contains:
+# The estimated pose between the sensor and the world
+geometry_msgs/Pose        sensor_frame
+float64                   rotation_rmse
+float64                   translation_rmse
