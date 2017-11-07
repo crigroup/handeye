@@ -28,17 +28,52 @@ class HandEyeCalibrator(object):
     """
     Parameters
     ----------
-    setup: :class:`Setup`, optional
+    setup: :class:`handeye.calibrator.Setup`
       Fixed setup or moving sensor
+
+    Raises
+    ------
+    KeyError
+      If `setup` is an invalid keyword (str)
+    ValueError
+      If `setup` is an invalid id (int)
     """
     if setup is None:
       self.setup = Setup.Moving
-    elif setup != Setup.Moving:
-      # TODO: Add support for Setup.Fixed
-      raise NotImplementedError('Only Setup.Moving is supported')
+    elif type(setup) == Setup:
+      self.setup = setup
+    elif type(setup) == str:
+      try:
+        setup = setup.capitalize()
+        self.setup = Setup[setup]
+      except KeyError:
+        raise KeyError('Invalid setup: {}'.format(setup))
+    elif type(setup) == int:
+      self.setup = Setup(setup)
+    else:
+      raise TypeError('Invalid setup type: {}'.format(type(setup)))
     self.reset()
     self.min_samples_required = 4
     self.valid_cos = lambda (x): np.clip(x, -1., 1.)
+
+  def add_sample(self, Q, Pinv):
+    """
+    Add one sample to the `HandEyeCalibrator` instance
+
+    Parameters
+    ----------
+    Q: array_like
+      Homogeneous transformation of the end-effector w.r.t. the robot base
+    Pinv: array_like
+      Homogeneous transformation of the calibration pattern (often called
+      `object`) w.r.t. the camera frame
+    """
+    self.Q.append(Q)
+    self.Qinv.append(br.transform.inverse(Q))
+    self.P.append(br.transform.inverse(Pinv))
+    self.Pinv.append(Pinv)
+    self.num_samples = len(self.Q)
+    return self.num_samples
 
   def assess_tcp_pose(self, Q, alpha=0.5, beta=0.5, d=float('inf')):
     """
@@ -47,18 +82,30 @@ class HandEyeCalibrator(object):
     Parameters
     ----------
     Q: array_like
-      Homogeneous transformation of the end-effector
+      Homogeneous transformation of the end-effector w.r.t. the robot base
     alpha: float, optional
-      TODO
+      Minimum threshold for the angle between to consecutive motions. That is
+      the angle :math:`<(\pmb{k}_{a,i}, \pmb{k}_{a,i+1})`
     beta: float, optional
-      TODO
+      Minimal threshold for every :math:`\psi_{i}` that is the rotation angle
+      of each relative motion :math:`\pmb{A}_{i}` and :math:`\pmb{B}_{i}`
     d: float, optional
-      TODO
+      Maximum trheshold for the norm of the translation :math:`\pmb{t}_{a,i}`
 
     Returns
     -------
     is_pose_ok: bool
       `True` if the pose `Q` complies with the golden rules. `False` otherwise.
+
+    Notes
+    -----
+    As a rotation matrix :math:`\pmb{R}` can be expressed as a rotation around
+    a rotation axis :math:`\pmb{k}` by an angle :math:`\psi`, the relations
+    between :math:`\psi`, :math:`\pmb{k}` and :math:`\pmb{R}` are given by
+    Rodrigues theorem. Moreover, :math:`\pmb{R}_a` and :math:`\pmb{R}_b` have
+    the same angle of rotation. We can rewrite :math:`\pmb{R}_a` and
+    :math:`\pmb{R}_b` as :math:`\mbox{Rot}(\pmb{k}_a, \psi)` and
+    :math:`\mbox{Rot}(\pmb{k}_b, \psi)` respectively.
     """
     metrics = self.compute_golden_rules_metrics(Q)
     num_metrics = len(metrics)
@@ -73,25 +120,6 @@ class HandEyeCalibrator(object):
                                                       and (t_App <= d))
     return is_pose_ok
 
-  def add_sample(self, Q, P):
-    """
-    Add one sample to the `HandEyeCalibrator` instance
-
-    Parameters
-    ----------
-    Q: array_like
-      Homogeneous transformation of the end-effector
-    P: array_like
-      Homogeneous transformation of the calibration pattern (often called
-      `object`)
-    """
-    self.Q.append(Q)
-    self.Qinv.append(br.transform.inverse(Q))
-    self.P.append(P)
-    self.Pinv.append(br.transform.inverse(P))
-    self.num_samples = len(self.Q)
-    return self.num_samples
-
   def compute_golden_rules_metrics(self, Q=None, Ap=None, App=None):
     """
     Compute the golden rules as presented in :cite:`Shi2005`.
@@ -99,18 +127,25 @@ class HandEyeCalibrator(object):
     Parameters
     ----------
     Q: array_like, optional
-      Homogeneous transformation of the end-effector
+      Homogeneous transformation of the end-effector w.r.t. the robot base
     Ap: array_like, optional
-      TODO
+      The penultimate motion homogeneous transformation :math:`\pmb{A}_{n-2}`
     App: array_like, optional
-      TODO
+      The last motion motion homogeneous transformation :math:`\pmb{A}_{n-1}`
     """
     if Q is not None:
       if self.num_samples == 1:
-        Ap = np.dot(self.Qinv[0], Q)
+        if self.setup == Setup.Moving:
+          Ap = np.dot(self.Qinv[0], Q)
+        elif self.setup == Setup.Fixed:
+          Ap = np.dot(self.Q[0], br.transform.inverse(Q))
       elif self.num_samples >= 2:
-        Ap = np.dot(self.Qinv[-2], self.Q[-1])
-        App = np.dot(self.Qinv[-1], Q)
+        if self.setup == Setup.Moving:
+          Ap = np.dot(self.Qinv[-2], self.Q[-1])
+          App = np.dot(self.Qinv[-1], Q)
+        elif self.setup == Setup.Fixed:
+          Ap = np.dot(self.Q[-2], self.Qinv[-1])
+          App = np.dot(self.Q[-1], br.transform.inverse(Q))
     res = tuple()
     if (Ap is not None) and (App is None):
       theta_Ap = abs(br.transform.to_axis_angle(Ap)[1])
@@ -141,7 +176,11 @@ class HandEyeCalibrator(object):
     A = []
     B = []
     for i in range(self.num_samples-1):
-      A.append( np.dot(self.Qinv[i], self.Q[i+1]) )
+      if self.setup == Setup.Moving:
+        A.append( np.dot(self.Qinv[i], self.Q[i+1]) )
+      elif self.setup == Setup.Fixed:
+        A.append( np.dot(self.Q[i], self.Qinv[i+1]) )
+      # B is the same for both setups
       B.append( np.dot(self.Pinv[i], self.P[i+1]) )
     return A, B
 

@@ -6,6 +6,7 @@ import rospy
 import rostest
 import unittest
 # Utils
+import numpy as np
 import baldor as br
 import criutils as cu
 # HandEye Calibration service
@@ -21,10 +22,16 @@ class TestHandEyeServer(unittest.TestCase):
     rospy.init_node(NODENAME)
     self.srv = rospy.ServiceProxy('handeye_calibration', CalibrateHandEye)
     self.srv.wait_for_service(timeout=2.0)
-    # Generate a valid testing request
-    self.X = tTo = br.transform.random(max_position=0.1)
-    bTc = br.transform.random(max_position=1.2)
-    samples = generate_noisy_samples(tTo, bTc, 10, 0, 0)
+    # Generate a valid calibration request
+    self.X = bTc = br.transform.random(max_position=1.2)
+    cTb = br.transform.inverse(bTc)
+    eTo = br.transform.random(max_position=0.1)
+    samples = []
+    for _ in range(10):
+      Q = bTe = br.transform.random()
+      bTo = np.dot(bTe, eTo)
+      Pinv = cTo = np.dot(cTb, bTo)
+      samples.append((Q, Pinv))
     self.req = CalibrateHandEyeRequest()
     self.req.setup = 'Moving'
     self.req.solver = 'ParkBryan1994'
@@ -43,7 +50,10 @@ class TestHandEyeServer(unittest.TestCase):
 
   def test_setup(self):
     request = copy.deepcopy(self.req)
-    # Valid setup
+    # Valid setups
+    request.setup = 'Fixed'
+    res = self.srv.call(request)
+    self.assertTrue(res.success)
     request.setup = 'Moving'
     res = self.srv.call(request)
     self.assertTrue(res.success)

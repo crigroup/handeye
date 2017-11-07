@@ -69,7 +69,7 @@ def generate_noisy_samples(tTo, bTc, num_samples, rot_noise=0.1e-2,
   Generate noisy samples.
 
   A sample is a tuple of `Q` and `P` homogeneous transformations. `Q` is the
-  transform of the end-effector, `P` is the homogeneous of the calibration
+  transform of the end-effector, `P` is the transform of the calibration
   pattern.
 
   Parameters
@@ -93,10 +93,10 @@ def generate_noisy_samples(tTo, bTc, num_samples, rot_noise=0.1e-2,
     List of noisy samples (tuple of `Q` and `P`)
   """
   samples = []
-  cTb = br.transform.inverse(bTc)  # ref frame (b) wrt camera (c)
+  cTb = br.transform.inverse(bTc)  # origin (b) wrt camera (c)
   for _ in range(num_samples):
-    bTt = br.transform.random()      # gripper (t) wrt ref frame (b)
-    bTo = np.dot(bTt, tTo)        # pattern (o) wrt ref frame (b)
+    bTt = br.transform.random()   # gripper (t) wrt origin (b)
+    bTo = np.dot(bTt, tTo)        # pattern (o) wrt origin (b)
     cTo = np.dot(cTb, bTo)        # pattern (o) wrt camera (c)
     Qnoisy = add_relative_noise(bTt, rot_noise, trans_noise)
     Pnoisy = add_relative_noise(cTo, rot_noise, trans_noise)
