@@ -20,7 +20,9 @@
   <depend>std_msgs</depend>
 
   <exec_depend>baldor</exec_depend>
+  <exec_depend>criutils</exec_depend>
   <exec_depend>message_runtime</exec_depend>
+  <exec_depend>python-enum34</exec_depend>
   <exec_depend>python-matplotlib</exec_depend>
   <exec_depend>python-numpy</exec_depend>
   <exec_depend>python-scipy</exec_depend>
