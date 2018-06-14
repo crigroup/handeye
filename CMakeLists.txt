@@ -36,3 +36,9 @@ if (CATKIN_ENABLE_TESTING)
   add_rostest(tests/test_handeye_server.test
     DEPENDENCIES ${${PROJECT_NAME}_EXPORTED_TARGETS})
 endif()
+
+# Install python scripts
+catkin_install_python(
+  PROGRAMS
+    scripts/handeye_server.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
