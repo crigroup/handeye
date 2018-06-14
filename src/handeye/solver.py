@@ -70,7 +70,7 @@ class SolverBase(object):
     C = np.array(C)
     C.shape = (-1,3)
     d = np.array(d).flatten()
-    tx, residuals, rank, s = np.linalg.lstsq(C, d, rcond=None)
+    tx, residuals, rank, s = np.linalg.lstsq(C, d, rcond=-1)
     return tx.flatten()
 
 
@@ -179,7 +179,7 @@ class TsaiLenz1989(SolverBase):
     C = np.array(C)
     C.shape = (-1,3)
     d = np.array(d).flatten()
-    Pcg_, residuals, rank, s = np.linalg.lstsq(C, d, rcond=None)
+    Pcg_, residuals, rank, s = np.linalg.lstsq(C, d, rcond=-1)
     Pcg = 2*Pcg_ / np.sqrt(1 + norm(Pcg_)**2)
     R1 = (1 - norm(Pcg)**2/2.) * np.eye(3)
     R2 = (np.dot(Pcg.reshape(3,1),Pcg.reshape(1,3)) +
