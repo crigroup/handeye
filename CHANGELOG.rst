@@ -2,8 +2,8 @@
 Changelog for package handeye
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.1 (2018-06-14)
+------------------
 * Fix `np.linalg.lstsq` bug
 * Add installation rules for python node
 * Contributors: fsuarez6
