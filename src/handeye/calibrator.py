@@ -54,7 +54,7 @@ class HandEyeCalibrator(object):
       raise TypeError('Invalid setup type: {}'.format(type(setup)))
     self.reset()
     self.min_samples_required = 4
-    self.valid_cos = lambda (x): np.clip(x, -1., 1.)
+    self.valid_cos = lambda x: np.clip(x, -1., 1.)
 
   def add_sample(self, Q, Pinv):
     """
