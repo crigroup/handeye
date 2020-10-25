@@ -17,8 +17,9 @@ This package has been developed by [CRI Group](http://www.ntu.edu.sg/home/cuong/
 
 ROS Distro | Source | Debian | Release Status
 ---------- | ------ | ------ | --------------
-indigo | [![Build Status](http://build.ros.org/buildStatus/icon?job=Isrc_uT__handeye__ubuntu_trusty__source)](http://build.ros.org/job/Isrc_uT__handeye__ubuntu_trusty__source) | [![Build Status](http://build.ros.org/buildStatus/icon?job=Ibin_uT64__handeye__ubuntu_trusty_amd64__binary)](http://build.ros.org/job/Ibin_uT64__handeye__ubuntu_trusty_amd64__binary) | <a href="http://repositories.ros.org/status_page/ros_indigo_default.html?q=handeye">Status</a>
 kinetic | [![Build Status](http://build.ros.org/buildStatus/icon?job=Ksrc_uX__handeye__ubuntu_xenial__source)](http://build.ros.org/job/Ksrc_uX__handeye__ubuntu_xenial__source/) | [![Build Status](http://build.ros.org/buildStatus/icon?job=Kbin_uX64__handeye__ubuntu_xenial_amd64__binary)](http://build.ros.org/job/Kbin_uX64__handeye__ubuntu_xenial_amd64__binary/) | <a href="http://repositories.ros.org/status_page/ros_kinetic_default.html?q=handeye">Status</a>
+melodic | [![Build Status](http://build.ros.org/buildStatus/icon?job=Msrc_uB__handeye__ubuntu_bionic__source)](http://build.ros.org/view/Msrc_uB/job/Msrc_uB__handeye__ubuntu_bionic__source/) | [![Build Status](http://build.ros.org/buildStatus/icon?job=Mbin_uB64__handeye__ubuntu_bionic_amd64__binary)](http://build.ros.org/view/Mbin_uB64/job/Mbin_uB64__handeye__ubuntu_bionic_amd64__binary/) | <a href="http://repositories.ros.org/status_page/ros_melodic_default.html?q=handeye">Status</a>
+noetic  |  |  | <a href="http://repositories.ros.org/status_page/ros_noetic_default.html?q=handeye">Status</a>
 
 Check in the *release status* which versions of the package are in **building**, **ros-shadow-fixed**
 (tagged as 'testing'), and **ros** (tagged as 'main').

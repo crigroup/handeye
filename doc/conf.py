@@ -50,9 +50,6 @@ use_napoleon = StrictVersion(sphinx.__version__) >= StrictVersion('1.3')
 
 if use_napoleon:
   extensions.append('sphinx.ext.napoleon')
-else:
-  extensions.append('numpydoc')
-  numpydoc_show_class_members = False
 
 # generate docs for __init__
 autoclass_content = 'both'

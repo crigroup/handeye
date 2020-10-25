@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-  <node name="handeye_server" pkg="handeye"
-    type="handeye_server.py"/>
-  <test test-name="test_handeye_server" pkg="handeye"
-    type="test_handeye_server.py"/>
+    <node name="handeye_server" pkg="handeye" type="handeye_server.py"/>
+    <test test-name="test_handeye_server" pkg="handeye" type="test_handeye_server.py"/>
 </launch>
