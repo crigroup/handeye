@@ -2,8 +2,8 @@
 Changelog for package handeye
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.2 (2020-10-25)
+------------------
 * Add support for ROS noetic and clean up
 * PR #4: Fix lambda syntax for Python 3 compatability
 * Contributors: John Stechschulte, fsuarez6
